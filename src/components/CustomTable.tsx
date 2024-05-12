@@ -30,7 +30,7 @@ export default function CustomTable({ rows, title }: Props) {
   return (
     <div>
       <div className="mb-5 text-center text-xl">{title}</div>
-      <div className="grid rounded-sm border border-slate-400">
+      <div className="grid min-w-60 overflow-auto rounded-sm border border-slate-400">
         <div className="grid grid-cols-3">
           {head.map((item, index) => (
             <button
@@ -42,15 +42,17 @@ export default function CustomTable({ rows, title }: Props) {
             </button>
           ))}
         </div>
-
         {sorted.map((value, index) => (
           <div className="grid grid-cols-3 border-b border-b-slate-400 py-5" key={value.id}>
             <div className="px-5 ">{value.title}</div>
             <div className="px-5 ">{value.about}</div>
+            <div className="px-5">
+              {typeof value.content === 'string' ? value.content : 'Content with subtable'}
+            </div>
             {typeof value.content === 'string' ? (
               <div className="px-5">{value.content}</div>
             ) : (
-              <div className="px-5">
+              <div className=" col-span-3 px-5 pt-5">
                 <CustomTable key={index} rows={value.content} title="Subtable" />
               </div>
             )}
