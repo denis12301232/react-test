@@ -1,15 +1,20 @@
 interface Props {
-  rows: Array<string[] | string>;
+  rows: Array<(string | string[][])[]>;
 }
 
 export default function CustomTable({ rows }: Props) {
+  const length = rows[0].length;
+  const style = { gridTemplateColumns: `repeat(${length}, minmax(0, 1fr))` };
+
   return (
-    <div>
+    <div className="grid border border-slate-600" style={style}>
       {rows.map((row) =>
-        Array.isArray(row) ? (
-          <CustomTable rows={row}></CustomTable>
-        ) : (
-          <div>{row}</div>
+        row.map((item) =>
+          Array.isArray(item) ? (
+            <CustomTable rows={item} />
+          ) : (
+            <div className="border border-slate-600">{item}</div>
+          )
         )
       )}
     </div>
