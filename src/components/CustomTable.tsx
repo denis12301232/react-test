@@ -3,7 +3,7 @@ interface Props {
 }
 
 export default function CustomTable({ rows }: Props) {
-  const length = rows[0].length;
+  const length = rows[0]?.length || 0;
   const style = { gridTemplateColumns: `repeat(${length}, minmax(0, 1fr))` };
 
   return (
