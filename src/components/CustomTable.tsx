@@ -1,10 +1,14 @@
+import { useMemo } from 'react';
+
 interface Props {
   rows: Array<(string | string[][])[]>;
 }
 
 export default function CustomTable({ rows }: Props) {
-  const length = rows[0]?.length || 0;
-  const style = { gridTemplateColumns: `repeat(${length}, minmax(0, 1fr))` };
+  const style = useMemo(
+    () => ({ gridTemplateColumns: `repeat(${rows[0]?.length || 0}, minmax(0, 1fr))` }),
+    [rows]
+  );
 
   return (
     <div className="grid border border-slate-600" style={style}>
