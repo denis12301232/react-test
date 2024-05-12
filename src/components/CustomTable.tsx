@@ -9,11 +9,13 @@ export default function CustomTable({ rows }: Props) {
   return (
     <div className="grid border border-slate-600" style={style}>
       {rows.map((row) =>
-        row.map((item) =>
+        row.map((item, j) =>
           Array.isArray(item) ? (
-            <CustomTable rows={item} />
+            <CustomTable rows={item} key={j} />
           ) : (
-            <div className="border border-slate-600">{item}</div>
+            <div className="border border-slate-600" key={j}>
+              {item}
+            </div>
           )
         )
       )}
