@@ -1,28 +1,62 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { IData } from '../types';
 
 interface Props {
-  rows: Array<(string | string[][])[]>;
+  rows: IData[];
+  title: string;
 }
 
-export default function CustomTable({ rows }: Props) {
-  const style = useMemo(
-    () => ({ gridTemplateColumns: `repeat(${rows[0]?.length || 0}, minmax(0, 1fr))` }),
+export default function CustomTable({ rows, title }: Props) {
+  const [selected, setSelected] = useState<keyof (typeof rows)[0]>('title');
+  const [sort, setSort] = useState(false);
+  const sorted = useMemo(() => [...rows].sort(sortRows), [rows, selected, sort]);
+  const head = useMemo<Array<keyof (typeof rows)[0]>>(
+    () => (rows[0] ? Object.keys(rows[0]).slice(1, 4) : ([] as any)),
     [rows]
   );
 
+  function sortRows(a: IData, b: IData) {
+    if (typeof a[selected] === 'string' && typeof b[selected] === 'string') {
+      return (a[selected] as string).localeCompare(b[selected] as string) * (sort ? -1 : 1);
+    }
+    return sort ? -1 : 1;
+  }
+
+  function selectSort(value: keyof (typeof rows)[0]) {
+    setSelected(value);
+    setSort((v) => !v);
+  }
+
   return (
-    <div className="grid border border-slate-600" style={style}>
-      {rows.map((row) =>
-        row.map((item, j) =>
-          Array.isArray(item) ? (
-            <CustomTable rows={item} key={j} />
-          ) : (
-            <div className="border border-slate-600" key={j}>
+    <div>
+      <div className="mb-5 text-center text-xl">{title}</div>
+      <div className="grid rounded-sm border border-slate-400">
+        <div className="grid grid-cols-3">
+          {head.map((item, index) => (
+            <button
+              className="cursor-pointer select-none border-b border-b-slate-600 px-5 py-5 text-xl uppercase hover:text-blue-600"
+              key={index}
+              onClick={() => selectSort(item)}
+            >
               {item}
-            </div>
-          )
-        )
-      )}
+            </button>
+          ))}
+        </div>
+
+        {sorted.map((value, index) => (
+          <div className="grid grid-cols-3 border-b border-b-slate-400 py-5" key={value.id}>
+            <div className="px-5 ">{value.title}</div>
+            <div className="px-5 ">{value.about}</div>
+            {typeof value.content === 'string' ? (
+              <div className="px-5">{value.content}</div>
+            ) : (
+              <div className="px-5">
+                <CustomTable key={index} rows={value.content} title="Subtable" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

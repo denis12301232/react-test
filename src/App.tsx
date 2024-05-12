@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="p-10">
-      <CustomTable rows={rows} />
+      <CustomTable rows={rows} title="Some table" />
     </div>
   );
 }
